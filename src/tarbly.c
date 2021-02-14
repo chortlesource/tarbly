@@ -30,7 +30,14 @@
 
 
 int main(const int argc, const char *argv[]) {
+  // Generate a header
+  HEADER_H *header = make_header("CMakeCache.txt");
 
+  // Print the details
+  print_header(header);
+
+  // Free memory
+  free(header);
 
   return 0;
 }

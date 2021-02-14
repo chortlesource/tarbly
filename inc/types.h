@@ -61,6 +61,10 @@
 // TYPES
 //
 
+typedef enum TSTATE {
+  T_ERR = 0, T_DONE
+} TSTATE;
+
 // USTAR Header Struct
 typedef struct POSIX_USTAR_H {
   char name[100];
@@ -85,7 +89,7 @@ typedef struct POSIX_USTAR_H {
 
 typedef union FILE_HEADER {
   USTAR_H data;
-  unsigned char data_ptr [BLOCK_SIZE];
+  char data_ptr [BLOCK_SIZE];
 } HEADER_H;
 
 

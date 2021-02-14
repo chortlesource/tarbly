@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////
 //
-// tarbly - tarbly.h
+// tarbly - header.h
 //
 // Copyright (c) 2021 Christopher M. Short
 //
@@ -21,27 +21,17 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-#ifndef _TARBLY_H
-#define _TARBLY_H
+#ifndef _TARBLY_HEADER_H
+#define _TARBLY_HEADER_H
 
 
 /////////////////////////////////////////////////////////////
-// DEPENDENCIES
+// HEADER FUNCTION DECLARATION
 //
 
-// Cstd libraries
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/sysmacros.h>
-#include <grp.h>
-#include <pwd.h>
+HEADER_H* make_header(char *path);
+void      print_header(HEADER_H *header);
+void      print_chars(char *str, size_t num);
 
-// Local includes
-#include "types.h"
-#include "util.h"
-#include "header.h"
 
-#endif // _TARBLY_H
+#endif // _TARBLY_HEADER_H
