@@ -1,0 +1,12 @@
+diff a/inc/types.h b/inc/types.h	(rejected hunks)
+@@ -61,10 +61,6 @@
+ // TYPES
+ //
+ 
+-typedef enum TSTATE {
+-  T_ERR = 0, T_DONE
+-} TSTATE;
+-
+ // USTAR Header Struct
+ typedef struct POSIX_USTAR_H {
+   char name[100];
