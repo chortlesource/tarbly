@@ -42,6 +42,6 @@
 // Local includes
 #include "types.h"
 #include "util.h"
-#include "header.h"
+#include "tar.h"
 
 #endif // _TARBLY_H

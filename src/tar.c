@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////
 //
-// tarbly - header.c
+// tarbly - tar.c
 //
 // Copyright (c) 2021 Christopher M. Short
 //
@@ -25,13 +25,60 @@
 
 
 /////////////////////////////////////////////////////////////
-// TARBLY FUNCTION IMPLEMENTATION
+// TAR FUNCTION IMPLEMENTATION
 //
+
+
+TAR*      make_tar(char *path) {
+  // Allocate memory for the struct and initialize
+  TAR  *tar = malloc(sizeof(TAR));
+  tar->capacity = 1;
+  tar->size     = 0;
+
+  // Allocate memory for the headers and filenames
+  size_t psize       = strnlen(path, NAME_SIZE);
+
+  char     *fpath    = malloc(psize * sizeof(char));
+  char     **fnames  = malloc(sizeof(char*) * tar->capacity);
+  HEADER_H **headers = malloc(sizeof(HEADER_H*) * tar->capacity);
+
+  tar->path      = fpath;
+  tar->filenames = fnames;
+  tar->headers   = headers;
+
+  // Add the file path
+  for(size_t i = 0; i < psize; i++)
+    fpath[i] = path[i];
+
+  return tar;
+}
+
+
+void      free_tar(TAR *tar) {
+  // Prevent accidental calling
+  if(tar == NULL) return;
+
+  // First free the filenames and headers
+  if(tar->size > 0) {
+    for(size_t i = 0; i < tar->size; i++) {
+      free(tar->filenames[i]);
+      free(tar->headers[i]);
+    }
+  }
+
+  tar->capacity = 0;
+  tar->size     = 0;
+  free(tar->filenames);
+  free(tar->headers);
+  free(tar->path);
+  free(tar);
+}
+
 
 HEADER_H* make_header(char *path) {
 
   // First allocate memory to the pointer and 0-fill.
-  HEADER_H *header = (HEADER_H*) malloc(sizeof(HEADER_H));
+  HEADER_H *header = malloc(sizeof(HEADER_H));
   memset(header->data_ptr, 0, BLOCK_SIZE);
   int errcount = 0;
 
@@ -134,7 +181,7 @@ HEADER_H* make_header(char *path) {
 }
 
 
-void print_header(HEADER_H *header) {
+void print_h(HEADER_H *header) {
   size_t mode  = 0;
   size_t uid   = 0;
   size_t gid   = 0;
@@ -159,10 +206,10 @@ void print_header(HEADER_H *header) {
   printf("SIZE: %zu\n", size);
   printf("TIME: %zu\n", mtime);
   printf("SUM : ");
-  print_chars(header->data.checksum, 8);
+  print_c(header->data.checksum, 8);
   printf("TYPE: %c\n", header->data.typeflag);
   printf("MAGI: ");
-  print_chars(header->data.magic, 6);
+  print_c(header->data.magic, 6);
   printf("VERS: %c", header->data.version[0]);
   printf("%c\n", header->data.version[1]);
   printf("UNAM: %s\n", header->data.uname);
@@ -171,7 +218,7 @@ void print_header(HEADER_H *header) {
 }
 
 
-void print_chars(char *str, size_t num) {
+void print_c(char *str, size_t num) {
   for(size_t i = 0; i < num; i++)
     printf("%c", str[i]);
   printf("\n");

@@ -31,13 +31,10 @@
 
 int main(const int argc, const char *argv[]) {
   // Generate a header
-  HEADER_H *header = make_header("CMakeCache.txt");
-
-  // Print the details
-  print_header(header);
+  TAR *tar = make_tar("CMakeCache.txt\n");
 
   // Free memory
-  free(header);
+  free_tar(tar);
 
   return 0;
 }

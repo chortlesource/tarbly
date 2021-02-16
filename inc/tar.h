@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////
 //
-// tarbly - header.h
+// tarbly - tar.h
 //
 // Copyright (c) 2021 Christopher M. Short
 //
@@ -21,17 +21,23 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-#ifndef _TARBLY_HEADER_H
-#define _TARBLY_HEADER_H
+#ifndef _TARBLY_TAR_H
+#define _TARBLY_TAR_H
 
 
 /////////////////////////////////////////////////////////////
-// HEADER FUNCTION DECLARATION
+// TAR FUNCTION DECLARATION
 //
 
+TAR*      make_tar(char *path);
+void      free_tar(TAR *tar);
+
 HEADER_H* make_header(char *path);
-void      print_header(HEADER_H *header);
-void      print_chars(char *str, size_t num);
 
 
-#endif // _TARBLY_HEADER_H
+// Print functions
+void      print_h(HEADER_H *header);
+void      print_c(char *str, size_t num);
+
+
+#endif // _TARBLY_TAR_H

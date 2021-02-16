@@ -32,6 +32,7 @@
 #define  BLOCK_SIZE  512
 #define  MAGIC       "ustar  "
 #define  CHCK_BLANK  "        "
+#define  NAME_SIZE   100
 
 #define  F_NORMAL    '0'        // Normal disk file
 #define  F_LINK      '1'        // Link to previously dumped file
@@ -61,10 +62,6 @@
 // TYPES
 //
 
-typedef enum TSTATE {
-  T_ERR = 0, T_DONE
-} TSTATE;
-
 // USTAR Header Struct
 typedef struct POSIX_USTAR_H {
   char name[100];
@@ -89,8 +86,19 @@ typedef struct POSIX_USTAR_H {
 
 typedef union FILE_HEADER {
   USTAR_H data;
-  char data_ptr [BLOCK_SIZE];
+  char    data_ptr [BLOCK_SIZE];
 } HEADER_H;
+
+
+// Tar Struct
+
+typedef struct TARBLY_TAR {
+  char         *path;
+  char         **filenames;
+  HEADER_H     **headers;
+  size_t       capacity;
+  size_t       size;
+} TAR;
 
 
 #endif // _TARBLY_TYPES_H
