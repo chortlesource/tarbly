@@ -30,10 +30,12 @@
 //
 
 TAR*      make_tar(char *path);
+int       add_to_tar(TAR *tar, char *path);
 void      free_tar(TAR *tar);
 
 HEADER_H* make_header(char *path);
-
+void      make_checksum(HEADER_H *header);
+int       verify_checksum(HEADER_H *header);
 
 // Print functions
 void      print_h(HEADER_H *header);

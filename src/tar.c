@@ -42,15 +42,45 @@ TAR*      make_tar(char *path) {
   char     **fnames  = malloc(sizeof(char*) * tar->capacity);
   HEADER_H **headers = malloc(sizeof(HEADER_H*) * tar->capacity);
 
+  // Assign the allocated vars to our TAR struct
   tar->path      = fpath;
   tar->filenames = fnames;
   tar->headers   = headers;
 
-  // Add the file path
+  // Copy path to our
+  for(size_t i = 0; i < psize; i++)
+    tar->path[i] = path[i];
+
+  return tar;
+}
+
+
+int       add_to_tar(TAR *tar, char *path) {
+  // Allocate memory for the filename
+  size_t psize = strnlen(path, NAME_SIZE);
+  char *fpath  = malloc(psize * sizeof(char));
+
+  // Copy the path to our string
   for(size_t i = 0; i < psize; i++)
     fpath[i] = path[i];
 
-  return tar;
+  // Create the header for our file
+  HEADER_H *header = make_header(fpath);
+  if(header == NULL) return 0; // Return false on fail
+
+  // Resize the arrays
+  tar->capacity += 1;
+  char     **ftemp = realloc(tar->filenames, tar->capacity * sizeof(char*));
+  HEADER_H **htemp = realloc(tar->headers, tar->capacity * sizeof(HEADER_H*));
+
+  // Assign the allocated vars to our TAR struct
+  tar->filenames            = ftemp;
+  tar->headers              = htemp;
+  tar->filenames[tar->size] = fpath;
+  tar->headers[tar->size]   = header;
+  tar->size                += 1;
+
+  return 1; // Return true on success
 }
 
 
@@ -169,8 +199,11 @@ HEADER_H* make_header(char *path) {
   // Configure the devmajor field
   octal_from_value(header->data.devmajor, major(st.st_dev), 8);
 
-    // Configure the devminor field
+  // Configure the devminor field
   octal_from_value(header->data.devminor, minor(st.st_dev), 8);
+
+  // Generate the checksum
+  make_checksum(header);
 
   // Fail by design unless all conditions are met
   if(errcount == 0)
@@ -178,6 +211,44 @@ HEADER_H* make_header(char *path) {
 
   printf("[TARBLY]: Unable to generate header file for: %s\n", path);
   return NULL;
+}
+
+
+void      make_checksum(HEADER_H *header) {
+  // Configure some helper vars
+  size_t checksum = 0;
+  char   *data    = header->data_ptr;
+
+  // Calculate the sum of all bytes in the header file
+  for(int i = 0; i < BLOCK_SIZE; i++)
+    checksum += *data++;
+
+  // Represent in Octal ASCII
+  octal_from_value(header->data.checksum, checksum, 8);
+}
+
+
+int       verify_checksum(HEADER_H *header) {
+  // First retain a copy of the checksum
+  size_t oldsum = 0;
+  size_t newsum = 0;
+  char   *data  = header->data_ptr;
+
+  // Copy the value of the checksum and replace with ' '
+  value_from_octal(header->data.checksum, &oldsum);
+  strncpy(header->data.checksum, CHCK_BLANK, strnlen(CHCK_BLANK, 8));
+
+  // Calculate the sum of all bytes in the header file
+  for(int i = 0; i < BLOCK_SIZE; i++)
+    newsum += *data++;
+
+  // Return the checksum
+  octal_from_value(header->data.checksum, oldsum, 8);
+
+  printf("OLD: %zu\n", oldsum);
+  printf("NEW: %zu\n", newsum);
+
+  return (newsum == oldsum);
 }
 
 
@@ -219,7 +290,11 @@ void print_h(HEADER_H *header) {
 
 
 void print_c(char *str, size_t num) {
-  for(size_t i = 0; i < num; i++)
+  for(size_t i = 0; i < num; i++) {
+    if(str[i] == '\0') break; // Will break at num or '\0'
+
     printf("%c", str[i]);
+  }
+
   printf("\n");
 }

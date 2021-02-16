@@ -33,6 +33,19 @@ int main(const int argc, const char *argv[]) {
   // Generate a header
   TAR *tar = make_tar("CMakeCache.txt\n");
 
+  if(add_to_tar(tar, "CMakeCache.txt")) {
+    printf("FILE: %s\n", tar->filenames[tar->size - 1]);
+    print_h(tar->headers[tar->size -1]);
+  }
+
+  // Verify the checksum
+  if(verify_checksum(tar->headers[tar->size - 1]))
+    printf("Checksum checks out!\n");
+
+
+  // Print the header again
+  print_h(tar->headers[tar->size - 1]);
+
   // Free memory
   free_tar(tar);
 
