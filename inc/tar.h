@@ -29,13 +29,17 @@
 // TAR FUNCTION DECLARATION
 //
 
-TAR*      make_tar(char *path);
-int       add_to_tar(TAR *tar, char *path);
-void      free_tar(TAR *tar);
+// TAR struct manipulation
+TAR*      make_tar(char *path);              // Create a new TAR struct
+int       add_to_tar(TAR *tar, char *path);  // Add a file to a TAR struct
+int       write_to_tar(TAR *tar);            // Write the TAR struct to disk
+TAR*      read_from_tar(char *path);         // Read into a TAR struct
+void      free_tar(TAR *tar);                // Free memory used by TAR
 
-HEADER_H* make_header(char *path);
-void      make_checksum(HEADER_H *header);
-int       verify_checksum(HEADER_H *header);
+// HEADER_H manipulation
+HEADER_H* make_header(char *path);           // Generate a ustar header
+void      make_checksum(HEADER_H *header);   // Generate the checksum
+int       verify_checksum(HEADER_H *header); // Verify the checksum
 
 // Print functions
 void      print_h(HEADER_H *header);
